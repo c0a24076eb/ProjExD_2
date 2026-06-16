@@ -100,7 +100,6 @@ def calc_orientation(org: pg.Rect,dst: pg.Rect,current_xy:tuple[float, float]) -
     """
     爆弾からこうかとんへの方向ベクトル計算
     """ 
-
     dx = dst.centerx - org.centerx
     dy = dst.centery - org.centery
 
