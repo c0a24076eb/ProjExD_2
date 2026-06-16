@@ -69,7 +69,7 @@ def main():
 
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
-            
+
         if kk_rct.colliderect(bb_rct):
             return
         screen.blit(kk_img, kk_rct)
@@ -77,7 +77,6 @@ def main():
         pg.display.update()
         tmr += 1
         clock.tick(50)
-
 
 if __name__ == "__main__":
     pg.init()
