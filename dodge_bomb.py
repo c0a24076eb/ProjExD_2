@@ -15,18 +15,22 @@ DELTA = {
 
 # Rectが画面内にあるか判定
 def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
-        yoko, tate = True, True
+    yoko, tate = True, True
 
-        if obj_rct.left < 0 or WIDTH < obj_rct.right:
+    if obj_rct.left < 0 or WIDTH < obj_rct.right:
             yoko = False
 
-        if obj_rct.top < 0 or HEIGHT < obj_rct.bottom:
+    if obj_rct.top < 0 or HEIGHT < obj_rct.bottom:
             tate = False
 
-        return yoko, tate
+    return yoko, tate
 
 # ゲームオーバー画面を表示
 def gameover(screen: pg.Surface) -> None:
+    
+    """
+    ゲームオーバー画面の表示
+    """
 
     black = pg.Surface((WIDTH, HEIGHT))
     pg.draw.rect(black, (0, 0, 0), pg.Rect(0, 0, WIDTH, HEIGHT))
@@ -52,6 +56,9 @@ def gameover(screen: pg.Surface) -> None:
 
 # 爆弾の拡大,加速
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    """
+    爆弾のサイズと拡大のリスト作成
+    """
     
     bb_imgs = []
     bb_accs = []
@@ -67,6 +74,9 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
 
 # こうかとんの向き
 def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
+    """
+    移動方向に対応したこうかとん画像の設定
+    """
     
     kk0 = pg.image.load("fig/3.png")
     kkR = pg.transform.flip(kk0, True, False)
@@ -86,7 +96,10 @@ def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
     return kk_dict
 
 # 追尾型爆弾
-def calc_orientation(org: pg.Rect,dst: pg.Rect,current_xy:tuple[float, float]) -> tuple[float, float]:   
+def calc_orientation(org: pg.Rect,dst: pg.Rect,current_xy:tuple[float, float]) -> tuple[float, float]:  
+    """
+    爆弾からこうかとんへの方向ベクトル計算
+    """ 
 
     dx = dst.centerx - org.centerx
     dy = dst.centery - org.centery
