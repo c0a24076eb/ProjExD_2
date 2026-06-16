@@ -24,6 +24,34 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
 
         return yoko, tate
 
+def gameover(screen: pg.Surface) -> None:
+    
+    # ゲームオーバー画面を表示する関数
+    # 引数：スクリーンSurface
+    # 戻り値：なし
+
+    black = pg.Surface((WIDTH, HEIGHT))
+    pg.draw.rect(black, (0, 0, 0), pg.Rect(0, 0, WIDTH, HEIGHT))
+    black.set_alpha(200)
+
+    fonto = pg.font.Font(None, 80)
+    txt = fonto.render("Game Over", True, (255, 255, 255))
+    txt_rct = txt.get_rect()
+    txt_rct.center = WIDTH // 2, HEIGHT // 2
+
+    kk_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 1.0)
+    kk_rct_l = kk_img.get_rect()
+    kk_rct_l.center = WIDTH // 2 - 250, HEIGHT // 2
+    kk_rct_r = kk_img.get_rect()
+    kk_rct_r.center = WIDTH // 2 + 250, HEIGHT // 2
+
+    screen.blit(black, [0, 0])
+    screen.blit(txt, txt_rct)
+    screen.blit(kk_img, kk_rct_l)
+    screen.blit(kk_img, kk_rct_r)
+    pg.display.update()
+    pg.time.wait(5000)
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -71,7 +99,9 @@ def main():
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
 
         if kk_rct.colliderect(bb_rct):
+            gameover(screen)
             return
+        
         screen.blit(kk_img, kk_rct)
 
         pg.display.update()
