@@ -13,6 +13,7 @@ DELTA = {
     pg.K_RIGHT: (+5, 0),
 }
 
+# Rectが画面内にあるか判定
 def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
         yoko, tate = True, True
 
@@ -24,11 +25,8 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
 
         return yoko, tate
 
+# ゲームオーバー画面を表示
 def gameover(screen: pg.Surface) -> None:
-    
-    # ゲームオーバー画面を表示する関数
-    # 引数：スクリーンSurface
-    # 戻り値：なし
 
     black = pg.Surface((WIDTH, HEIGHT))
     pg.draw.rect(black, (0, 0, 0), pg.Rect(0, 0, WIDTH, HEIGHT))
@@ -52,11 +50,8 @@ def gameover(screen: pg.Surface) -> None:
     pg.display.update()
     pg.time.wait(5000)
 
+# 爆弾の拡大,加速
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
-
-    #大きさの異なる爆弾Surfaceと加速度リストを作成する関数
-    # 引数：なし
-    # 戻り値：爆弾Surfaceのリスト，加速度のリスト
     
     bb_imgs = []
     bb_accs = []
@@ -70,10 +65,10 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
 
     return bb_imgs, bb_accs
 
+# こうかとんの向き
 def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
     
     kk0 = pg.image.load("fig/3.png")
-    # 右向き画像
     kkR = pg.transform.flip(kk0, True, False)
 
     kk_dict = {
@@ -90,22 +85,8 @@ def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
 
     return kk_dict
 
-def calc_orientation(
-    org: pg.Rect,
-    dst: pg.Rect,
-    current_xy: tuple[float, float]
-) -> tuple[float, float]:
-    """
-    爆弾から見たこうかとんの方向ベクトルを計算する
-
-    引数：
-        org: 爆弾Rect
-        dst: こうかとんRect
-        current_xy: 現在の移動方向
-
-    戻り値：
-        (vx, vy)
-    """
+# 追尾型爆弾
+def calc_orientation(org: pg.Rect,dst: pg.Rect,current_xy:tuple[float, float]) -> tuple[float, float]:   
 
     dx = dst.centerx - org.centerx
     dy = dst.centery - org.centery
@@ -143,6 +124,7 @@ def main():
 
     clock = pg.time.Clock()
     tmr = 0
+    
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -184,18 +166,18 @@ def main():
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
 
+        # こうかとん画像切り替え
         old_center = kk_rct.center
-
         kk_img = kk_imgs[tuple(sum_mv)]
         kk_rct = kk_img.get_rect()
         kk_rct.center = old_center
-
+        
+        #　こうかとん壁
         kk_rct.move_ip(sum_mv)
-
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
 
-        # 衝突判定
+        # ゲームオーバー
         if kk_rct.colliderect(bb_rct):
             gameover(screen)
             return
