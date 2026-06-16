@@ -90,6 +90,38 @@ def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
 
     return kk_dict
 
+def calc_orientation(
+    org: pg.Rect,
+    dst: pg.Rect,
+    current_xy: tuple[float, float]
+) -> tuple[float, float]:
+    """
+    爆弾から見たこうかとんの方向ベクトルを計算する
+
+    引数：
+        org: 爆弾Rect
+        dst: こうかとんRect
+        current_xy: 現在の移動方向
+
+    戻り値：
+        (vx, vy)
+    """
+
+    dx = dst.centerx - org.centerx
+    dy = dst.centery - org.centery
+
+    norm = (dx**2 + dy**2) ** 0.5
+
+    # 近すぎるときは慣性維持
+    if norm < 300:
+        return current_xy
+
+    # ノルムを √50 にする
+    vx = dx / norm * (50 ** 0.5)
+    vy = dy / norm * (50 ** 0.5)
+
+    return vx, vy
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -121,6 +153,9 @@ def main():
         # 爆弾の大きさと速度を時間経過で変更
         idx = min(tmr // 500, 9)
         bb_img = bb_imgs[idx]
+        
+        # 爆弾がこうかとんを追従する方向を計算
+        vx, vy = calc_orientation(bb_rct, kk_rct, (vx, vy))
         avx = vx * bb_accs[idx]
         avy = vy * bb_accs[idx]
 
