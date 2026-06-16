@@ -70,11 +70,32 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
 
     return bb_imgs, bb_accs
 
+def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
+    
+    kk0 = pg.image.load("fig/3.png")
+    # 右向き画像
+    kkR = pg.transform.flip(kk0, True, False)
+
+    kk_dict = {
+        (0, 0):kk0,
+        (5, 0): kkR,
+        (5, 5): pg.transform.rotozoom(kkR, 315, 1.0),
+        (0, 5): pg.transform.rotozoom(kk0, 90, 1.0),
+        (-5, 5): pg.transform.rotozoom(kk0, 45, 1.0),
+        (-5, 0): pg.transform.rotozoom(kk0, 0, 1.0),
+        (-5, -5): pg.transform.rotozoom(kk0, 315, 1.0),
+        (0, -5): pg.transform.rotozoom(kkR, 90, 1.0), 
+        (5, -5): pg.transform.rotozoom(kkR, 45, 1.0), 
+    }
+
+    return kk_dict
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     bg_img = pg.image.load("fig/pg_bg.jpg")    
-    kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
+    kk_imgs = get_kk_imgs()
+    kk_img = kk_imgs[(0, 0)]
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
 
@@ -127,6 +148,12 @@ def main():
             if key_lst[k]:
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
+
+        old_center = kk_rct.center
+
+        kk_img = kk_imgs[tuple(sum_mv)]
+        kk_rct = kk_img.get_rect()
+        kk_rct.center = old_center
 
         kk_rct.move_ip(sum_mv)
 
